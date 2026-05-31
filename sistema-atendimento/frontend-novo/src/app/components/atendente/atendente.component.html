@@ -1,0 +1,92 @@
+<div class="atendente-container">
+  <header class="atendente-header">
+    <h1>🖥️ Painel do Atendente</h1>
+    <button class="btn-encerrar" (click)="encerrarExpediente()">Encerrar Expediente</button>
+  </header>
+
+  <!-- Mensagem de feedback -->
+  <div class="mensagem" *ngIf="mensagem" [class.erro]="mensagem.includes('Erro')">
+    {{ mensagem }}
+    <button (click)="mensagem=null">✕</button>
+  </div>
+
+  <div class="painel-grid">
+    <!-- Senha em atendimento -->
+    <section class="card senha-card">
+      <h2>Atendimento Atual</h2>
+
+      <ng-container *ngIf="!senhaAtual">
+        <div class="vazio">
+          <p>Nenhuma senha em atendimento</p>
+          <button
+            class="btn-chamar"
+            (click)="chamarProxima()"
+            [disabled]="carregando">
+            {{ carregando ? 'Aguarde...' : '▶ Chamar Próxima' }}
+          </button>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="senhaAtual">
+        <div class="senha-info">
+          <div class="senha-codigo-atendente" [style.color]="corTipo(senhaAtual.tipo)">
+            {{ senhaAtual.codigo }}
+          </div>
+          <div class="detalhe-row">
+            <span>Tipo:</span>
+            <span class="badge" [style.background-color]="corTipo(senhaAtual.tipo)">
+              {{ senhaAtual.tipo }}
+            </span>
+          </div>
+          <div class="detalhe-row">
+            <span>Guichê:</span>
+            <strong>{{ senhaAtual.guiche }}</strong>
+          </div>
+          <div class="detalhe-row">
+            <span>TM previsto:</span>
+            <strong>{{ tmMinutos(senhaAtual.tm_segundos) }}</strong>
+          </div>
+          <div class="detalhe-row">
+            <span>Hora chamada:</span>
+            <strong>{{ senhaAtual.chamada_em | date:'HH:mm:ss' }}</strong>
+          </div>
+        </div>
+        <div class="acoes">
+          <button class="btn-finalizar" (click)="finalizar()" [disabled]="carregando">
+            ✓ Finalizar Atendimento
+          </button>
+        </div>
+      </ng-container>
+    </section>
+
+    <!-- Status da fila -->
+    <section class="card fila-card" *ngIf="statusFila">
+      <h2>Status da Fila</h2>
+      <div class="expediente-badge" [class.aberto]="statusFila.expediente">
+        {{ statusFila.expediente ? '🟢 Expediente Aberto' : '🔴 Fora do Expediente' }}
+      </div>
+
+      <div class="fila-lista">
+        <div class="fila-item" *ngFor="let f of statusFila.fila">
+          <span class="fila-sigla" [style.background-color]="corTipo(f.tipo)">{{ f.tipo }}</span>
+          <div class="barra-wrapper">
+            <div class="barra" [style.width.%]="Math.min(f.aguardando * 10, 100)"
+                               [style.background-color]="corTipo(f.tipo)"></div>
+          </div>
+          <span class="fila-num">{{ f.aguardando }}</span>
+        </div>
+        <p class="sem-fila" *ngIf="statusFila.fila.length === 0">Nenhuma senha aguardando.</p>
+      </div>
+
+      <div class="guiches-lista">
+        <div
+          class="guiche-chip"
+          *ngFor="let g of statusFila.guiches"
+          [class.ocupado]="g.status === 'ocupado'">
+          Guichê {{ g.numero }}<br>
+          <small>{{ g.status === 'ocupado' ? 'Ocupado' : 'Livre' }}</small>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

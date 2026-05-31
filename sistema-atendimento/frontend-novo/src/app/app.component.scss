@@ -1,0 +1,26 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f0f4f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.nav-bar {
+  display: flex;
+  gap: 0;
+  background: #1a237e;
+  padding: 0.5rem 1.5rem;
+
+  a {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s;
+
+    &:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    &.ativo  { color: #fff; background: rgba(255,255,255,0.15); }
+  }
+}

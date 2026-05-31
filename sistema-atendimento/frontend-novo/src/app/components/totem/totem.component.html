@@ -1,0 +1,59 @@
+<div class="totem-container">
+  <header class="totem-header">
+    <div class="logo">
+      <span class="logo-icon">🏥</span>
+      <h1>Laboratório Médico</h1>
+    </div>
+    <p class="subtitulo">Retire sua senha de atendimento</p>
+  </header>
+
+  <!-- Tela de seleção -->
+  <div class="tela-selecao" *ngIf="!senhaEmitida && !carregando">
+    <p class="instrucao">Selecione o tipo de atendimento:</p>
+    <div class="opcoes">
+      <button
+        *ngFor="let item of tipos"
+        class="btn-tipo"
+        [style.border-color]="item.cor"
+        [style.color]="item.cor"
+        (click)="emitir(item.tipo)">
+        <span class="tipo-sigla" [style.background-color]="item.cor">{{ item.tipo }}</span>
+        <span class="tipo-label">{{ item.label }}</span>
+        <span class="tipo-desc">{{ item.descricao }}</span>
+      </button>
+    </div>
+    <div class="erro" *ngIf="erro">⚠️ {{ erro }}</div>
+  </div>
+
+  <!-- Carregando -->
+  <div class="tela-carregando" *ngIf="carregando">
+    <div class="spinner"></div>
+    <p>Emitindo senha...</p>
+  </div>
+
+  <!-- Senha emitida -->
+  <div class="tela-senha" *ngIf="senhaEmitida && !carregando">
+    <div class="senha-card" [class.descartada]="senhaEmitida.descartada">
+      <div class="senha-titulo" *ngIf="!senhaEmitida.descartada">Sua senha é:</div>
+      <div class="senha-codigo" *ngIf="!senhaEmitida.descartada">{{ senhaEmitida.codigo }}</div>
+      <div class="senha-tipo-badge">{{ senhaEmitida.tipo }}</div>
+
+      <ng-container *ngIf="senhaEmitida.descartada">
+        <div class="descartada-msg">
+          <span>⚠️</span>
+          <p>Ocorreu um problema na emissão. Por favor, tente novamente.</p>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!senhaEmitida.descartada">
+        <p class="aguarde">Aguarde ser chamado no painel.</p>
+        <p class="horario">Emitida em: {{ senhaEmitida.emitida_em | date:'HH:mm:ss' }}</p>
+      </ng-container>
+    </div>
+    <button class="btn-nova" (click)="nova()">Emitir outra senha</button>
+  </div>
+
+  <footer class="totem-footer">
+    <p>Expediente: 07h às 17h</p>
+  </footer>
+</div>

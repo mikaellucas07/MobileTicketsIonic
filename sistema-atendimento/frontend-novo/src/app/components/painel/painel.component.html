@@ -1,0 +1,59 @@
+<div class="painel-container">
+  <header class="painel-header">
+    <div class="titulo">
+      <span>🏥</span> Laboratório Médico — Painel de Chamadas
+    </div>
+    <div class="relogio">{{ horaAtual }}</div>
+  </header>
+
+  <!-- Última chamada (destaque) -->
+  <section class="ultima-chamada" *ngIf="chamadas.length > 0">
+    <div class="label-ultima">SENHA CHAMADA</div>
+    <div class="codigo-destaque" [style.color]="corTipo(chamadas[0].tipo)">
+      {{ chamadas[0].codigo }}
+    </div>
+    <div class="guiche-destaque">
+      GUICHÊ <span>{{ chamadas[0].guiche }}</span>
+    </div>
+    <div class="badge-tipo" [style.background-color]="corTipo(chamadas[0].tipo)">
+      {{ labelTipo(chamadas[0].tipo) }}
+    </div>
+  </section>
+
+  <div class="sem-chamadas" *ngIf="chamadas.length === 0">
+    <p>Aguardando chamadas...</p>
+  </div>
+
+  <!-- Histórico das anteriores -->
+  <section class="historico" *ngIf="chamadas.length > 1">
+    <div class="historico-titulo">Últimas chamadas</div>
+    <div class="historico-lista">
+      <div class="historico-item" *ngFor="let c of chamadas.slice(1)">
+        <span class="hist-codigo">{{ c.codigo }}</span>
+        <span class="hist-guiche">Guichê {{ c.guiche }}</span>
+        <span class="hist-badge" [style.background-color]="corTipo(c.tipo)">{{ c.tipo }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Status da fila -->
+  <section class="status-fila" *ngIf="statusFila">
+    <div class="status-titulo">Status da Fila</div>
+    <div class="fila-tipos">
+      <div class="fila-tipo" *ngFor="let f of statusFila.fila">
+        <span class="fila-sigla" [style.background-color]="corTipo(f.tipo)">{{ f.tipo }}</span>
+        <span class="fila-count">{{ f.aguardando }}</span>
+        <span class="fila-label">aguardando</span>
+      </div>
+    </div>
+    <div class="guiches-status">
+      <div
+        class="guiche-item"
+        *ngFor="let g of statusFila.guiches"
+        [class.ocupado]="g.status === 'ocupado'">
+        <span>Guichê {{ g.numero }}</span>
+        <span>{{ g.status === 'ocupado' ? '🔴 Ocupado' : '🟢 Livre' }}</span>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,125 @@
+<div class="relatorio-container">
+  <header>
+    <h1>📊 Relatórios</h1>
+  </header>
+
+  <!-- Filtros -->
+  <section class="filtros card">
+    <div class="tipo-toggle">
+      <button [class.ativo]="tipo==='diario'" (click)="tipo='diario'">Diário</button>
+      <button [class.ativo]="tipo==='mensal'" (click)="tipo='mensal'">Mensal</button>
+    </div>
+
+    <div class="filtro-campos">
+      <ng-container *ngIf="tipo==='diario'">
+        <label>Data:</label>
+        <input type="date" [(ngModel)]="dataDiario">
+      </ng-container>
+      <ng-container *ngIf="tipo==='mensal'">
+        <label>Mês:</label>
+        <input type="number" [(ngModel)]="mesMensal" min="1" max="12" style="width:60px">
+        <label>Ano:</label>
+        <input type="number" [(ngModel)]="anoMensal" min="2020" style="width:90px">
+      </ng-container>
+      <button class="btn-buscar" (click)="buscar()" [disabled]="carregando">
+        {{ carregando ? 'Buscando...' : '🔍 Buscar' }}
+      </button>
+    </div>
+  </section>
+
+  <div class="erro" *ngIf="erro">⚠️ {{ erro }}</div>
+
+  <!-- DIÁRIO -->
+  <ng-container *ngIf="relatorioDiario">
+    <h2 class="secao-titulo">Relatório Diário — {{ relatorioDiario.data }}</h2>
+
+    <!-- Resumo por tipo -->
+    <section class="resumo-tipos">
+      <div class="resumo-card" *ngFor="let r of relatorioDiario.resumo">
+        <div class="resumo-tipo-badge" [style.background-color]="corTipo(r.tipo)">{{ r.tipo }}</div>
+        <div class="resumo-stat"><span>Emitidas</span><strong>{{ r.total_emitidas }}</strong></div>
+        <div class="resumo-stat"><span>Atendidas</span><strong>{{ r.total_atendidas }}</strong></div>
+        <div class="resumo-stat"><span>Descartadas</span><strong>{{ r.total_descartadas }}</strong></div>
+        <div class="resumo-stat"><span>TM médio</span><strong>{{ r.tm_medio_min | number:'1.1-1' }} min</strong></div>
+      </div>
+    </section>
+
+    <!-- Totais -->
+    <section class="totais card">
+      <div class="total-item">
+        <span>Total Emitidas</span>
+        <strong>{{ totalEmitidas(relatorioDiario.resumo) }}</strong>
+      </div>
+      <div class="total-item">
+        <span>Total Atendidas</span>
+        <strong>{{ totalAtendidas(relatorioDiario.resumo) }}</strong>
+      </div>
+    </section>
+
+    <!-- Detalhado -->
+    <section class="card">
+      <h3>Detalhamento de Senhas</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Tipo</th>
+              <th>Status</th>
+              <th>Emitida em</th>
+              <th>Chamada em</th>
+              <th>Fim Atend.</th>
+              <th>Guichê</th>
+              <th>TM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of relatorioDiario.detalhado" [class]="s.status">
+              <td><code>{{ s.codigo }}</code></td>
+              <td><span class="badge" [style.background-color]="corTipo(s.tipo)">{{ s.tipo }}</span></td>
+              <td>{{ s.status }}</td>
+              <td>{{ s.emitida_em | date:'HH:mm:ss' }}</td>
+              <td>{{ (s.chamada_em | date:'HH:mm:ss') || '—' }}</td>
+              <td>{{ (s.atendimento_fim | date:'HH:mm:ss') || '—' }}</td>
+              <td>{{ s.guiche || '—' }}</td>
+              <td>{{ s.tm_segundos ? (s.tm_segundos / 60 | number:'1.1-1') + ' min' : '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+
+  <!-- MENSAL -->
+  <ng-container *ngIf="relatorioMensal">
+    <h2 class="secao-titulo">
+      Relatório Mensal — {{ nomeMes(relatorioMensal.mes) }}/{{ relatorioMensal.ano }}
+    </h2>
+    <section class="card">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Emitidas</th>
+              <th>Atendidas</th>
+              <th>Descartadas</th>
+              <th>TM Médio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of relatorioMensal.resumo">
+              <td>{{ r.data }}</td>
+              <td><span class="badge" [style.background-color]="corTipo(r.tipo)">{{ r.tipo }}</span></td>
+              <td>{{ r.total_emitidas }}</td>
+              <td>{{ r.total_atendidas }}</td>
+              <td>{{ r.total_descartadas }}</td>
+              <td>{{ r.tm_medio_min | number:'1.1-1' }} min</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+</div>
