@@ -175,7 +175,11 @@ O projeto usa **SQLite** em runtime (arquivo `backend/data/atendimento.db`). O a
 
 ## 👥 Autores
 
-Mikael Lucas da Silva - 01815744
+- Mikael Lucas da Silva - 01815744
+- Ana Beatriz Vasconcenlos - 01707957
+- Juliana Eugênia Anacleto Barbosa - 01800345
+- Thayana Araujo Brito da Silva - 01784035
+- Lucas Gabriel de Aguiar Santiago - 01814331
 
 ---
 
